@@ -1,0 +1,74 @@
+Tutorial CDI
+============
+
+:Author:   Victor Osório
+:Email:    victor.perticarrari@gmail.com
+:Date:     2019-07-10
+:Revision: 1.0.0
+
+
+Definições
+----------
+Antes de apresentar o *Java CDI*, é preciso apresentar algumas definições que nos ajudarão a entender melhor do que estamos falando.
+
+Java EE ou Jakarta EE
+~~~~~~~~~~~~~~~~~~~~~
+A grosso modo, *Jakarta EE*, ou como era conhecido antigamente *Java EE* é um modelo de programação onde a lógica de negocios é o foco do desenvolvimento. Toda e qualquer feature que não seja referente a lógica de negócios deve ser delegada para o *Container Java EE* como uma configuração.
+
+Uma aplicação Java EE não deverá depender de uma implementação especifica, a compilação dependerá de uma série de APIs e a implementação dessas APIs será carregada em Tempo de Execução pelo *Container Java EE*.
+
+*De fato*, o Mundo do Java EE sempre estará um passo atrás em termos de inovação tecnologica, pois muitas das novas tecnologias ainda não estarão especificadas enquanto já em uso. 
+
+*Porém*, estará um passo a frente pois proporá uma padronização a tecnologia já existente aglutinando boas práticas e provendo uma maior variedade de soluções para um mesmo problema.
+
+Java EE Container
+~~~~~~~~~~~~~~~~~
+Containers são a implementação concreta de todas as especificações Java EE. Os containers disponíveis no mercado são link:https://wildfly.org/[WildFly], link:https://thorntail.io/[Thorntail], link:https://www.payara.fish/[Payara], link:https://projects.eclipse.org/projects/ee4j.glassfish[GlassFish] e link:https://tomee.apache.org/[Apache TomEE].
+
+Background
+----------
+
+IoC - Inversão de Controle 
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+link:https://martinfowler.com/bliki/InversionOfControl.html[Segundo Martin Fowler], Inversão de Controle é um padrão de programação diferencia um framework de uma biblioteca. Enquanto em uma biblioteca você tem que conectar as coisas para conseguir algo, com a Inversão do Controle você consegue algo e as coisas se conectam.
+
+O Java CDI adiciona um conceito à Inversão de Controle, o Contexto. Então os objetos de uma aplicação além de carregar suas dependências, deverão defini quais contextos possuem. Você verá que isso pode ser feito facilmente!
+
+JSRs
+~~~~
+O Java CDI foi especificado pelas JSR abaixo:
+
+* *JSR 330*: Dependency Injection for Java
+* *JSR 346*: Contexts and Dependency Injection for JavaTM EE 1.1
+* *JSR 365*: Contexts and Dependency Injection for JavaTM 2.0
+
+Vale a pena ler! 
+
+EJB, Managed Beans, Interceptors, etc...
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Java CDI vem para enriquecer essas especificações e trabalhar simultaneamente, porém um o escopo um pouco diferente.
+
+Injeção de Dependências
+-----------------------
+Proposto pela *JSR 330*, esta tem o objetivo de padronizar:
+
+. Um conjunto de Annotations para uso em classes injetáveis
+. Uma API de configuração de injetor fácil de usar e altamente tipada
+
+Para podermos usar a Injeção de Dependências, adicionar a Annotation `@Inject`:
+
+[source,java]
+----
+public class MyController {
+    @Inject
+    private MyManager myManager;
+
+    public void doSomething() {
+        // do something
+    }
+}
+----
+
+Qualquer classe Java é elegível para ser injetada desde que:
+
+* Tenha um construtor público com zero argumentos

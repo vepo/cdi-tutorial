@@ -1,9 +1,9 @@
-package io.vepo.cdi;
+package io.vepo.access;
 
 import javax.ws.rs.core.Application;
 import javax.ws.rs.ApplicationPath;
 
 @ApplicationPath("/")
-public class CdiApplication extends Application {
+public class AccessApplication extends Application {
 
 }

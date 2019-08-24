@@ -1,4 +1,5 @@
-Tutorial CDI
+Java CDI: O que é, como se reproduzem e onde vivem os componentes automágicos
+Usando Java CDI em projetos Jakarta EE ou Microprofile.io
 ============
 
 :Author:   Victor Osório
@@ -6,12 +7,22 @@ Tutorial CDI
 :Date:     2019-07-10
 :Revision: 1.0.0
 
+Introdução
+----------
+Java CDI é uma especificação que pode nos ajudar a dar velocidade e padronização ao desenvolvimento. Ela nos permite que possamos criar projetos com baixo acoplamento e alta coesão, algo muito desejado para que criar bons projetos.
+
+O termo automágico foi copiado de uma apresentação de 2015 que está disponível na página da especificação. Ela revela algo muito importante sobre essa especificação, ela nos permite desenvolver sem se preocupar (não usaria o termo importar) com instanciação, dependências e finalização de certos objetos.
 
 Definições
 ----------
-Antes de apresentar o *Java CDI*, é preciso apresentar algumas definições que nos ajudarão a entender melhor do que estamos falando.
+Antes de apresentar o *Java CDI*, é preciso apresentar algumas definições que nos ajudarão a entender melhor do que estamos falando. São elas:
 
-Java EE ou Jakarta EE
+* Jakarta EE (antigo Java EE)
+* Container Jakarta EE
+* Inversão de Controle
+* Programação Orientada a Aspecto
+
+Jakarta EE ou Java EE
 ~~~~~~~~~~~~~~~~~~~~~
 A grosso modo, *Jakarta EE*, ou como era conhecido antigamente *Java EE* é um modelo de programação onde a lógica de negocios é o foco do desenvolvimento. Toda e qualquer feature que não seja referente a lógica de negócios deve ser delegada para o *Container Java EE* como uma configuração.
 
@@ -32,7 +43,7 @@ IoC - Inversão de Controle
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 link:https://martinfowler.com/bliki/InversionOfControl.html[Segundo Martin Fowler], Inversão de Controle é um padrão de programação diferencia um framework de uma biblioteca. Enquanto em uma biblioteca você tem que conectar as coisas para conseguir algo, com a Inversão do Controle você consegue algo e as coisas se conectam.
 
-O Java CDI adiciona um conceito à Inversão de Controle, o Contexto. Então os objetos de uma aplicação além de carregar suas dependências, deverão defini quais contextos possuem. Você verá que isso pode ser feito facilmente!
+O Java CDI adiciona um conceito à Inversão de Controle, o Contexto. Então os objetos de uma aplicação além de carregar suas dependências, deverão definir quais contextos possuem. Você verá que isso pode ser feito facilmente!
 
 JSRs
 ~~~~
@@ -42,11 +53,20 @@ O Java CDI foi especificado pelas JSR abaixo:
 * *JSR 346*: Contexts and Dependency Injection for JavaTM EE 1.1
 * *JSR 365*: Contexts and Dependency Injection for JavaTM 2.0
 
-Vale a pena ler! 
+Vale a pena ler! Basta ler a JSR 365, com ela você terá uma visão mais geral, apresentando todos os casos possíveis de uso.
 
 EJB, Managed Beans, Interceptors, etc...
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Java CDI vem para enriquecer essas especificações e trabalhar simultaneamente, porém um o escopo um pouco diferente.
+
+Managed Beans
+-------------
+
+Essa especificação podemos afirmar que é a base do CDI. Toda classe Java é eligivel para ser um Bean, basta ter:
+
+* Um construtor publico sem argumentos
+
+Toda vez que falarmos de Bean, estamos falando de objeto que pode ser injetável em outra classe.
 
 Injeção de Dependências
 -----------------------
@@ -59,16 +79,40 @@ Para podermos usar a Injeção de Dependências, adicionar a Annotation `@Inject
 
 [source,java]
 ----
-public class MyController {
+@Path(“/user”)
+public class UserEndpoint {
     @Inject
-    private MyManager myManager;
-
-    public void doSomething() {
-        // do something
+    private Repository<User, String> userRepository;
+    
+    @POST
+    public User create(@Valid User newUser) {
+        return this.userRepository.create(newUser);
     }
 }
 ----
 
-Qualquer classe Java é elegível para ser injetada desde que:
+Qualquer objeto que seja um Bean pode ser adicionado a outro bean. Esse é a funcionalidade básica do Java CDI.
 
-* Tenha um construtor público com zero argumentos
+Injetando Contexto
+------------------
+
+Agora vamos complicar um pouco. Nosso bean ele deveria ser único apenas em um determinado contexto. Para resolver isso, o Java CDI define uma série de escopos possíveis para um bean:
+
+* Application
+* Session
+* Conversation
+* Request 
+
+Esses contextos eles são definidos juntamente com o Bean. Quem usa o Bean não precisa saber qual é o contexto dele. Abaixo criaremos um bean em que o escopo é a Request, isso significa que o momento da criação será quando a Request for iniciada e será destruido quando a request for finalizada. Sua função será armazenar alguns dados de usuário.
+
+[source,java]
+----
+@RequestScoped
+public class UserCredentials {
+ // TODO
+}
+
+Inicializando Dependências
+--------------------------
+
+Quando o Bean que iremos injetar no código é um pouco mais complexo

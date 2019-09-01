@@ -1,0 +1,4 @@
+mongo:
+    user: root
+    password: root
+    host: localhost

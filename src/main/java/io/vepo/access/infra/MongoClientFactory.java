@@ -33,7 +33,7 @@ import com.mongodb.client.MongoCollection;
 public class MongoClientFactory {
 	private static final Logger logger = LoggerFactory.getLogger(MongoClientFactory.class);
 
-	private static final String DATABASE = "my-clinic";
+	private static final String DATABASE = "cdi-tutorial";
 
 	@Inject
 	@ConfigProperty(name = "mongo.user")
@@ -83,6 +83,7 @@ public class MongoClientFactory {
 	@SuppressWarnings({ "unchecked" })
 	public <T> MongoCollection<T> getCollection(InjectionPoint injectionPoint) {
 		final ParameterizedType parameterizedType = (ParameterizedType) injectionPoint.getType();
+		System.out.println(parameterizedType);
 		final Class<T> genericTypeClass = (Class<T>) parameterizedType.getActualTypeArguments()[0];
 		return produceMongoClient().getDatabase(DATABASE).getCollection(uncapitalize(genericTypeClass.getSimpleName()),
 				genericTypeClass);

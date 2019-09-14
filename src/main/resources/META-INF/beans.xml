@@ -5,4 +5,7 @@
 	<interceptors>
 		<class>io.vepo.access.infra.log.LoggedInterceptor</class>
 	</interceptors>
+	<decorators>
+		<class>io.vepo.access.lang.HelloServiceValidator</class>
+	</decorators>
 </beans>

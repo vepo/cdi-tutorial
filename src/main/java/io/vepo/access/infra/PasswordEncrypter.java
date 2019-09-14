@@ -30,6 +30,10 @@ public class PasswordEncrypter {
 	@ConfigProperty(name = "PASSWORD_SECRET_KEY", defaultValue = "MY-SECRET-KEY")
 	private String secretKeyPlain;
 
+	public PasswordEncrypter() {
+		logger.info("Creating PasswordEncrypter it should be one for all application!!!!");
+	}
+
 	@PostConstruct
 	public void setup() {
 		MessageDigest sha = null;

@@ -2,12 +2,21 @@ package io.vepo.access.infra;
 
 import javax.enterprise.context.RequestScoped;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @RequestScoped
 public class Credentials {
+
+	private static final Logger logger = LoggerFactory.getLogger(Credentials.class);
 
 	private String token;
 	private String username;
 	private String email;
+
+	public Credentials() {
+		logger.info("CREATING a new Credentials!!!!! It should be one for Request");
+	}
 
 	public String getEmail() {
 		return email;

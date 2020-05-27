@@ -29,11 +29,13 @@ import io.vepo.access.infra.Jwt;
 import io.vepo.access.infra.PasswordEncrypter;
 import io.vepo.access.infra.Secured;
 import io.vepo.access.infra.log.Logged;
+import io.vepo.access.infra.stats.Measured;
 import io.vepo.access.user.events.UserCreated;
 import io.vepo.access.user.events.UserRemoved;
 
 @ApplicationScoped
 @Path("/user")
+@Measured
 public class UserEndpoint {
 	private static final Logger logger = LoggerFactory.getLogger(UserEndpoint.class);
 
@@ -111,7 +113,13 @@ public class UserEndpoint {
 	}
 
 	public void init(@Observes @Initialized(ApplicationScoped.class) Object init) {
-		User admin = this.userRepository.findByUsername("admin").orElseGet(() -> this.createUser(newAdminUser()));
+		User admin = this.userRepository.findByUsername("admin").orElseGet(() -> {
+			User user = newAdminUser();
+			user.setPassword(this.passwordEncrypter.encrypt(user.getPassword()));
+			this.userRepository.create(user);
+			this.createdEvent.fire(new UserCreated(user.getUsername()));
+			return user;
+		});
 		logger.info("Admin created: {}", admin);
 	}
 
